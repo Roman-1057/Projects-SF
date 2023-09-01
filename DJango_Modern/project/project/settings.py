@@ -132,4 +132,4 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# STATIC_ROOT = ["static_root"]
+
