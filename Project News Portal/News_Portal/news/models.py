@@ -8,19 +8,28 @@ class Author(models.Model):
 
     def update_rating(self):  # Метод обновления рейтинга
         # Рейтинг постов
-        post_rating = self.posts.aggregate(models.Sum('rating'))['rating__sum'] or 0
+        article_rating = Post.objects.filter(author=self).aggregate(models.Sum('rating'))['rating__sum'] or 0
         # Рейтинг комментов авторов
-        comment_rating = self.comments.aggregate(models.Sum('rating'))['rating__sum'] or 0
+        comment_rating = Comment.objects.filter(post__author=self).aggregate(models.Sum('rating'))['rating__sum'] or 0
         # Рейтинг комментов к постам
-        post_comment_rating = Comment.objects.filter(post__author=self).aggregate(models.Sum('rating'))[
-                                  'rating__sum'] or 0
-        # Суммарный рейтинг и * 3
-        self.rating = post_rating * 3 + comment_rating + post_comment_rating
+        comment_rating_to_articles = Comment.objects.filter(post__author=self).aggregate(models.Sum('rating'))['rating__sum'] or 0
+
+        self.rating = article_rating * 3 + comment_rating + comment_rating_to_articles
         self.save()
+
+    def set_default_rating(self):
+        self.rating = self._meta.get_field('rating').get_default()
+        self.save()
+
+    def __str__(self):
+        return self.user.title()
 
 
 class Category(models.Model):
     name = models.CharField(unique=True, max_length=50)
+
+    def __str__(self):
+        return self.name.title()
 
 
 class Post(models.Model):
@@ -54,6 +63,12 @@ class Post(models.Model):
             return self.text
         else:
             return self.text[:124] + '...'
+
+    def __str__(self):
+        if self.post_type == 'article':
+            return f'{self.title.title()}: {self.text[:20]}'
+        else:
+            return self.title.title()
 
 
 class PostCategory(models.Model):  #  Модель связей многие ко многим

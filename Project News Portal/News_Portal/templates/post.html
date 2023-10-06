@@ -1,0 +1,67 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %}
+
+{% load censor_filters %}
+<!-- Название у нас будет Product -->
+{% block title %}
+    <style>
+        table.center {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .neonText1 {
+            color: #F700FF;
+            text-shadow:
+                0 0 7px #F700FF,
+                0 0 10px #F700FF,
+                0 0 21px #F700FF,
+                0 0 42px #B300FF,
+                0 0 82px #B300FF,
+                0 0 92px #B300FF,
+                0 0 102px #B300FF,
+                0 0 151px #B300FF;
+        }
+    </style>
+
+       <table class="center" border="0" cellspacing="0" cellpadding=0 width="1000">
+           <tr class="neonText1">
+               <td><font size="7">Заголовок</font></td>
+               <td><font size="7">Дата публикации</font></td>
+           </tr>
+
+           <!-- Для каждого товара будете генерироваться новая строчка,
+           т.е. новый HTML код, который указан в теле цикла.
+           При этом сам цикл работает точно так же, как и в Python.
+           product — переменная цикла, т.е. наш товар полученный из списка -->
+           <tr>
+               <!-- Не забываем, что переменные в шаблоне ничем не отличаются
+                от переменных в Python. Здесь также можно получать доступ к
+                полям объекта модели. Например, здесь мы выводим имя,
+                в следующем столбце описание, и т.д.  -->
+               <td><font size="5">{{ post.title }}</font></td>
+               <td><font size="5">{{ post.created_at|date:"d.m.Y" }}</font></td>
+           </tr>
+       </table>
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
+{% block content %}
+    <style>
+        .neonText2 {
+               color: #00FF33;
+                text-shadow:
+                    0 0 92px #00FF33,
+                    0 0 102px #00FF33,
+                    0 0 151px #00FF33;
+        }
+        .text
+        {
+            margin-left: 180px;
+            width: 1000px;
+            word-wrap: break-word;
+        }
+    </style>
+        <h1 class="neonText2 animate__animated animate__fadeInUp" align="center">Содержание</h1>
+        <br>
+        <p class="text animate__animated animate__fadeInUp" align="center"><font size="4">{{ post.text|censor:"херня,говняное,конченое" }}</font></p>
+{% endblock content %}
