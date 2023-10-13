@@ -61,12 +61,38 @@
                 в следующем столбце описание, и т.д.  -->
                <td><font size="5"><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></font></td>
                <td><font size="5">{{ post.created_at|date:"d.m.Y" }}</font></td>
-               <td><font size="5">{{ post.text|truncatechars:20 }}</font></td>
+               <td><font size="5">{{ post.text|truncatechars:20|censor:"херня,говняное,конченое" }}</font></td>
            </tr>
            {% endfor %}
        </table>
     {% else %}
         <h4 class="text-light"><font size="4">Новостей нет</font></h4>
     {% endif %}
+<!-- Проверяем, что поддерживается постраничный вывод -->
+{% if is_paginated %}
+<div align="center"><font size="4">
+    <!-- Если доступна предыдущая страница, то даём ссылку на неё и самую первую страницу -->
+    {% if page_obj.has_previous %}
+            <a href="?page=1">Начало</a>
+            <a href="?page={{ page_obj.previous_page_number }}"><<<</a>
+    {% endif %}
+
+    <!-- Показываем только текущую страницу и ближайшие к ней, чтобы список не тянулся и не захламлял страницу -->
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <a>{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+
+    <!-- Если есть следующая страница, то даём ссылку на неё и на самую последнюю страницу -->
+    {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">>>></a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Продолжение</a>
+    {% endif %}
+</font>
+</div>
+{% endif %}
 {% endblock content %}
 
