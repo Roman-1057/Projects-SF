@@ -1,7 +1,7 @@
 # Импортируем класс, который говорит нам о том,
 # что в этом представлении мы будем выводить список объектов из БД
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import *
 from django.core.paginator import Paginator
 from .filters import PostFilter
@@ -62,9 +62,9 @@ class SearchPost(ListView):
         return context
 
 
-class CreatePost(ListView):
+class CreatePost(CreateView):
     model = Post
-    template_name = 'create_post.html'
+    template_name = 'add.html'
     context_object_name = 'news'
     ordering = '-created_at'
     paginate_by = 1  # поставим постраничный вывод в один элемент
@@ -89,3 +89,21 @@ class CreatePost(ListView):
             form.save()
 
         return super().get(request, *args, **kwargs)
+
+
+# дженерик для редактирования объекта
+class PostUpdate(UpdateView):
+    template_name = 'news/edit.html'
+    form_class = PostForm
+
+    # метод get_object мы используем вместо queryset, чтобы получить информацию об объекте, который мы собираемся редактировать
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return Post.objects.get(pk=id)
+
+
+# дженерик для удаления товара
+class PostDelete(DeleteView):
+    template_name = 'news/delete.html'
+    queryset = Post.objects.all()
+    success_url = '/news/'

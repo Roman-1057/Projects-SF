@@ -59,7 +59,7 @@
                 от переменных в Python. Здесь также можно получать доступ к
                 полям объекта модели. Например, здесь мы выводим имя,
                 в следующем столбце описание, и т.д.  -->
-               <td><font size="5"><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></font></td>
+               <td><font size="5"><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></font></td>
                <td><font size="5">{{ post.created_at|date:"d.m.Y" }}</font></td>
                <td><font size="5">{{ post.text|truncatechars:20|censor:"херня,говняное,конченое" }}</font></td>
            </tr>

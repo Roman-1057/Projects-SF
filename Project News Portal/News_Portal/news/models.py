@@ -22,7 +22,7 @@ class Author(models.Model):
         self.save()
 
     def __str__(self):
-        return self.user.title()
+        return self.user.username.title()
 
 
 class Category(models.Model):
@@ -69,6 +69,9 @@ class Post(models.Model):
             return f'{self.title.title()}: {self.text[:20]}'
         else:
             return self.title.title()
+
+    def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
+        return f'/news/{self.id}'
 
 
 class PostCategory(models.Model):  #  Модель связей многие ко многим

@@ -3,9 +3,9 @@ from .models import Post
 
 
 class PostForm(ModelForm):
-    check_box = BooleanField(label='Ало, Галочка!')  # добавляем галочку, или же true-false поле
+    # check_box = BooleanField(label='Ало, Галочка!')  # добавляем галочку, или же true-false поле
 
     class Meta:
         model = Post
-        fields = ['title', 'author', 'category', 'text', 'post_type',
-                  'check_box']  # не забываем включить галочку в поля, иначе она не будет показываться на странице!
+        fields = ['title', 'author', 'category', 'text', 'post_type']
+        # не забываем включить галочку в поля, иначе она не будет показываться на странице!
