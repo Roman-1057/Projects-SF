@@ -1,9 +1,9 @@
-<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
 
 {% load censor_filters %}
-<!-- Название у нас будет products -->
+
 {% block title %}
+
 <style>
 .neonText {
   color: #00FFFF;
@@ -19,10 +19,11 @@
 }
 </style>
     <h2 class="neonText animate__animated animate__fadeInDown"><font size="10">Все новости и статьи</font></h2>
+
 {% endblock title %}
 
-<!-- В контенте на странице мы выводим все товары -->
 {% block content %}
+
 <style>
         table,
         td,
@@ -32,15 +33,6 @@
         }
 </style>
 
-    <!-- Используем переданную из представления переменную time_now
-    и применяем к ней фильтр date. По назначению этот фильтр очень похож
-    на метод strftime у объекта datetime в Python — вывод времени
-    в указанном формате. -->
-<!--    <p><font size="4">{{ time_now|date:'d M Y' }}</font></p>-->
-
-   <!-- Если в переменной next_sale будет None,
-   то выведется указанный в фильтре текст -->
-<!--    <p><font size="4"> {{ next_sale|default_if_none:"Скидок нет" }}</font></p>-->
     {% if news %}
        <table border="0" cellspacing="0" cellpadding="10" width="1200" align="center">
            <tr>
@@ -49,35 +41,27 @@
                <td>Содержание</td>
            </tr>
 
-           <!-- Для каждого товара будете генерироваться новая строчка,
-           т.е. новый HTML код, который указан в теле цикла.
-           При этом сам цикл работает точно так же, как и в Python.
-           product — переменная цикла, т.е. наш товар полученный из списка -->
            {% for post in news %}
+
            <tr>
-               <!-- Не забываем, что переменные в шаблоне ничем не отличаются
-                от переменных в Python. Здесь также можно получать доступ к
-                полям объекта модели. Например, здесь мы выводим имя,
-                в следующем столбце описание, и т.д.  -->
                <td><font size="5"><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></font></td>
                <td><font size="5">{{ post.created_at|date:"d.m.Y" }}</font></td>
-               <td><font size="5">{{ post.text|truncatechars:20|censor:"херня,говняное,конченое" }}</font></td>
+               <td><font size="3">{{ post.text|truncatechars:20|censor:"херня,говняное,конченое" }}</font></td>
            </tr>
            {% endfor %}
        </table>
     {% else %}
         <h4 class="text-light"><font size="4">Новостей нет</font></h4>
     {% endif %}
-<!-- Проверяем, что поддерживается постраничный вывод -->
+
 {% if is_paginated %}
 <div align="center"><font size="4">
-    <!-- Если доступна предыдущая страница, то даём ссылку на неё и самую первую страницу -->
+
     {% if page_obj.has_previous %}
             <a href="?page=1">Начало</a>
             <a href="?page={{ page_obj.previous_page_number }}"><<<</a>
     {% endif %}
 
-    <!-- Показываем только текущую страницу и ближайшие к ней, чтобы список не тянулся и не захламлял страницу -->
     {% for num in page_obj.paginator.page_range %}
         {% if page_obj.number == num %}
             <a>{{ num }}</a>
@@ -86,7 +70,6 @@
         {% endif %}
     {% endfor %}
 
-    <!-- Если есть следующая страница, то даём ссылку на неё и на самую последнюю страницу -->
     {% if page_obj.has_next %}
             <a href="?page={{ page_obj.next_page_number }}">>>></a>
             <a href="?page={{ page_obj.paginator.num_pages }}">Продолжение</a>

@@ -1,8 +1,7 @@
-<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
 
 {% load censor_filters %}
-<!-- Название у нас будет Product -->
+
 {% block title %}
     <style>
         table.center {
@@ -28,23 +27,13 @@
                <td><font size="7">Заголовок</font></td>
                <td><font size="7">Дата публикации</font></td>
            </tr>
-
-           <!-- Для каждого товара будете генерироваться новая строчка,
-           т.е. новый HTML код, который указан в теле цикла.
-           При этом сам цикл работает точно так же, как и в Python.
-           product — переменная цикла, т.е. наш товар полученный из списка -->
            <tr>
-               <!-- Не забываем, что переменные в шаблоне ничем не отличаются
-                от переменных в Python. Здесь также можно получать доступ к
-                полям объекта модели. Например, здесь мы выводим имя,
-                в следующем столбце описание, и т.д.  -->
                <td><font size="5">{{ post.title }}</font></td>
                <td><font size="5">{{ post.created_at|date:"d.m.Y" }}</font></td>
            </tr>
        </table>
 {% endblock title %}
 
-<!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
 {% block content %}
     <style>
         .neonText2 {
@@ -61,9 +50,13 @@
             word-wrap: break-word;
         }
     </style>
-        <h1 class="neonText2 animate__animated animate__fadeInUp" align="center">Содержание</h1>
+<div class="animate__animated animate__fadeInUp" align="center">
+        <h1 class="neonText2" >Содержание</h1>
         <br>
-        <p class="text animate__animated animate__fadeInUp" align="center"><font size="4">{{ post.text|censor:"херня,говняное,конченое" }}</font></p>
-<a href="{% url 'post_update' post.id %}"><u>Редактировать</u></a> <!-- добавим ссылку на редактирование товара-->
-<a href="{% url 'post_delete' post.id %}"><u> Удалить </u></a> <!-- добавим ссылку на удаление товара-->
+            <p><font size="4">{{ post.text|censor:"херня,говняное,конченое" }}</font></p>
+        <font size="4">
+            <a href="{% url 'post_update' post.id %}" ><u >Редактировать</u></a>
+            <a href="{% url 'post_delete' post.id %}"><u> Удалить </u></a>
+        </font>
+</div>
 {% endblock content %}
