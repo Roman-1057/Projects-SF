@@ -1,8 +1,10 @@
-from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from .models import *
 from .filters import PostFilter
 from .forms import PostForm
+from django.contrib.auth.models import User
 
 
 class PostsList(ListView):
@@ -37,7 +39,7 @@ class SearchPost(ListView):
         return context
 
 
-class CreatePost(CreateView):
+class CreatePost(LoginRequiredMixin, CreateView):
     model = Post
     template_name = 'add.html'
     context_object_name = 'news'
@@ -54,7 +56,7 @@ class CreatePost(CreateView):
         return super().get(request, *args, **kwargs)
 
 
-class PostUpdate(UpdateView):
+class PostUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'edit.html'
     form_class = PostForm
 
@@ -63,7 +65,17 @@ class PostUpdate(UpdateView):
         return Post.objects.get(pk=id)
 
 
-class PostDelete(DeleteView):
+class PostDelete(LoginRequiredMixin, DeleteView):
     template_name = 'delete.html'
     queryset = Post.objects.all()
-    success_url = '/news/'
+    success_url = '/news'
+
+
+class IndexView(LoginRequiredMixin, TemplateView):
+    template_name = 'index.html'
+
+
+class BaseRegisterView(CreateView):
+    model = User
+    form_class = BaseRegisterForm
+    success_url = '/news'
