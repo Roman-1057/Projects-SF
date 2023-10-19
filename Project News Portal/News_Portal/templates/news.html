@@ -46,7 +46,7 @@
            <tr>
                <td><font size="5"><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></font></td>
                <td><font size="5">{{ post.created_at|date:"d.m.Y" }}</font></td>
-               <td><font size="3">{{ post.text|truncatechars:20|censor:"херня,говняное,конченое" }}</font></td>
+               <td><font size="3">{{ post.text|truncatechars:20|censor:"херня,говняное,говно,конченое" }}</font></td>
            </tr>
            {% endfor %}
        </table>

@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from .models import *
 from .filters import PostFilter
 from .forms import PostForm
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 
 
 class PostsList(ListView):
@@ -39,13 +41,14 @@ class SearchPost(ListView):
         return context
 
 
-class CreatePost(LoginRequiredMixin, CreateView):
+class CreatePost(LoginRequiredMixin, PermissionRequiredMixin,  CreateView):
     model = Post
     template_name = 'add.html'
     context_object_name = 'news'
     ordering = '-created_at'
     paginate_by = 1
     form_class = PostForm
+    permission_required = 'news.add_post'
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
@@ -56,26 +59,42 @@ class CreatePost(LoginRequiredMixin, CreateView):
         return super().get(request, *args, **kwargs)
 
 
-class PostUpdate(LoginRequiredMixin, UpdateView):
+class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     template_name = 'edit.html'
     form_class = PostForm
+    permission_required = 'news.change_post'
 
     def get_object(self, **kwargs):
         id = self.kwargs.get('pk')
         return Post.objects.get(pk=id)
 
 
-class PostDelete(LoginRequiredMixin, DeleteView):
+class PostDelete(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     template_name = 'delete.html'
     queryset = Post.objects.all()
     success_url = '/news'
+    permission_required = 'news.delete_post'
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_authors'] = not self.request.user.groups.filter(name='authors').exists()
+        return context
 
 
 class BaseRegisterView(CreateView):
     model = User
     form_class = BaseRegisterForm
     success_url = '/news'
+
+
+@login_required
+def upgrade_me(request):
+    user = request.user
+    authors_group = Group.objects.get(name='authors')
+    if not request.user.groups.filter(name='authors').exists():
+        authors_group.user_set.add(user)
+    return redirect('/news')

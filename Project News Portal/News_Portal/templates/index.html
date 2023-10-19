@@ -1,10 +1,29 @@
 {% extends 'flatpages/default.html' %}
 
 {% block title %}
-<h2>Страница авторизованного пользователя {{request.user.username}}</h2>
+<style>
+.neonText {
+  color: #00FFFF;
+  text-shadow:
+      0 0 7px #00FFFF,
+      0 0 10px #00FFFF,
+      0 0 21px #00FFFF,
+      0 0 42px #00FFFF,
+      0 0 82px #00FFFF,
+      0 0 92px #00FFFF,
+      0 0 102px #00FFFF,
+      0 0 151px #00FFFF;
+}
+</style>
+    <h2 class="neonText animate__animated animate__fadeInDown"><font size="10">Страница авторизованного пользователя {{request.user.username}}</font></h2>
 {% endblock title %}
 
 {% block content %}
-<div> Здесь может содержаться персональная информация для каждого пользователя </div>
-<button> <a href="logout">Выйти</a> </button>
+<div class="text animate__animated animate__fadeInUp" align="center">
+    <h3>Личные данные</h3>
+<button> <a href="logout">Выйти</a></button>
+    {% if is_not_authors %}
+        <button> <a href="upgrade"> Стать автором </a> </button>
+    {% endif %}
+</div>
 {% endblock content %}

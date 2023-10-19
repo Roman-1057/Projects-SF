@@ -1,6 +1,6 @@
 from django.urls import path
-# Импортируем созданное нами представление
-from .views import PostsList, PostDetail, SearchPost, CreatePost, PostUpdate, PostDelete, IndexView, BaseRegisterView
+from .views import PostsList, PostDetail, SearchPost, CreatePost, PostUpdate, PostDelete, \
+    IndexView, BaseRegisterView, upgrade_me
 from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
@@ -21,4 +21,5 @@ urlpatterns = [
     path('newsup',
          BaseRegisterView.as_view(template_name='newsup.html'),
          name='newsup'),
+    path('upgrade', upgrade_me, name='upgrade')
 ]
