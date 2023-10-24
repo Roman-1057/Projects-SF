@@ -1,0 +1,19 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+<style>
+.neonText {
+  color: #00FFFF;
+  text-shadow:
+      0 0 7px #00FFFF,
+      0 0 10px #00FFFF,
+      0 0 21px #00FFFF,
+      0 0 42px #00FFFF,
+      0 0 82px #00FFFF,
+      0 0 92px #00FFFF,
+      0 0 102px #00FFFF,
+      0 0 151px #00FFFF;
+}
+</style>
+    <h2 class="neonText animate__animated animate__fadeInDown"><font size="10">Вы подписаны на {{ request.GET.selected_category }}</font></h2>
+{% endblock title %}

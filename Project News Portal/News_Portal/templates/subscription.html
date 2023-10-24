@@ -1,0 +1,35 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+<style>
+.neonText {
+  color: #00FFFF;
+  text-shadow:
+      0 0 7px #00FFFF,
+      0 0 10px #00FFFF,
+      0 0 21px #00FFFF,
+      0 0 42px #00FFFF,
+      0 0 82px #00FFFF,
+      0 0 92px #00FFFF,
+      0 0 102px #00FFFF,
+      0 0 151px #00FFFF;
+}
+</style>
+    <h2 class="neonText animate__animated animate__fadeInDown"><font size="10">Ваши подписки</font></h2>
+{% endblock title %}
+
+{% block content %}
+<div class="text animate__animated animate__fadeInUp" align="center">
+{% with subscribed_categories=request.user.subscribed_categories.all %}
+{% if subscribed_categories %}
+  {% for category in category_list %}
+    {% if category in subscribed_categories %}
+      <h3>{{ category }}</h3>
+    {% endif %}
+  {% endfor %}
+{% else %}
+  <h4>Вы не подписаны на разделы</h4>
+{% endif %}
+{% endwith %}
+</div>
+{% endblock content %}
