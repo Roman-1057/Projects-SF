@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import PostsList, PostDetail, SearchPost, CreatePost, PostUpdate, PostDelete, \
-    IndexView, BaseRegisterView, upgrade_me
+    IndexView, BaseRegisterView, upgrade_me, subscribe_category, Categories, unsubscribe_category, \
+    Subscription
 from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
@@ -21,5 +22,9 @@ urlpatterns = [
     path('newsup',
          BaseRegisterView.as_view(template_name='newsup.html'),
          name='newsup'),
-    path('upgrade', upgrade_me, name='upgrade')
+    path('upgrade', upgrade_me, name='upgrade'),
+    path('<int:pk>/subscription_category', subscribe_category, name='subscribe_category'),
+    path('<int:pk>/unsubscription_category', unsubscribe_category, name='unsubscribe_category'),
+    path('categories', Categories.as_view()),
+    path('subscription', Subscription.as_view()),
 ]

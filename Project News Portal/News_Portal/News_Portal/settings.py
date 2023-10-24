@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
+    # 'news.apps.NewsConfig'
 ]
 
 MIDDLEWARE = [
@@ -111,4 +112,16 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_FORMS = {'signup': 'news.forms.BasicSignupForm'}
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'kraynov.rom'
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = 'kraynov.rom@yandex.ru'
+# ADMINS = [
+#     (),
+#     # список всех админов в формате ('имя', 'их почта')
+# ]
+# SERVER_EMAIL = 'kraynov.rom@yandex.ru'  # это будет у нас вместо аргумента FROM в массовой рассылке
 

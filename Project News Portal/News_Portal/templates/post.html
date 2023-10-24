@@ -55,8 +55,9 @@
         <br>
             <p><font size="4">{{ post.text|censor:"херня,говняное,говно,конченое" }}</font></p>
         <font size="4">
-            <a href="{% url 'post_update' post.id %}" ><u >Редактировать</u></a>
+            <a href="{% url 'post_update' post.id %}" ><u>Редактировать</u></a>
             <a href="{% url 'post_delete' post.id %}"><u> Удалить </u></a>
         </font>
 </div>
+
 {% endblock content %}
