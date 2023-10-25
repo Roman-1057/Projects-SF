@@ -36,7 +36,7 @@
            </tr>
          {% for category in category_list %}
            <tr>
-               <td><font size="5">{{ category }}</font></td>
+               <td><font size="5"><a href="{% url 'posts_in_category' category.id %}?selected_category={{ category }}">{{ category }}</a></font></td>
                {% if category in request.user.subscribed_categories.all %}
                     <td><font size="5"><a href="{% url 'unsubscribe_category' category.id %}?selected_category={{ category }}">Отписаться</a></font></td>
                {% else %}

@@ -12,6 +12,8 @@ ALLOWED_HOSTS = ['127.0.0.1']
 SITE_ID = 1
 
 INSTALLED_APPS = [
+    'news.apps.NewsConfig',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -20,13 +22,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    'news',
     'django_filters',
+
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
-    # 'news.apps.NewsConfig'
 ]
 
 MIDDLEWARE = [
@@ -90,7 +91,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# LOGIN_URL = 'login'
 LOGIN_URL = '/accounts/login/'
 
 LOGIN_REDIRECT_URL = '/news'
@@ -115,13 +115,14 @@ ACCOUNT_FORMS = {'signup': 'news.forms.BasicSignupForm'}
 
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'kraynov.rom'
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_SSL = True
-DEFAULT_FROM_EMAIL = 'kraynov.rom@yandex.ru'
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 # ADMINS = [
 #     (),
 #     # список всех админов в формате ('имя', 'их почта')
 # ]
 # SERVER_EMAIL = 'kraynov.rom@yandex.ru'  # это будет у нас вместо аргумента FROM в массовой рассылке
 
+SITE_URL = 'http://127.0.0.1:8000'

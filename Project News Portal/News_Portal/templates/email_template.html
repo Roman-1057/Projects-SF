@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Уведомление</title>
 </head>
 <body>
-    <p>Здравствуй, {{ user.username }}. Новая статья в твоем любимом разделе!</p>
+    <p>Здравствуй, {{ user.username }}. Новая <a href='{{ link }}'>статья</a> в твоем любимом разделе!</p>
     <h2>{{ post.title }}</h2>
     <p> {{ post.text|truncatechars:50 }} </p>
 

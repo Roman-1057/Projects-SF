@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.template.loader import render_to_string
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from .models import *
 from .filters import PostFilter
@@ -8,7 +7,6 @@ from .forms import PostForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from django.core.mail import send_mail
 
 
 class PostsList(ListView):
@@ -17,7 +15,7 @@ class PostsList(ListView):
     template_name = 'news.html'
     context_object_name = 'news'
 
-    paginate_by = 2  # вывод в 2 страницы
+    paginate_by = 2
 
 
 class PostDetail(DetailView):
@@ -35,7 +33,7 @@ class SearchPost(ListView):
     template_name = 'search.html'
     context_object_name = 'news'
     ordering = '-created_at'
-    paginate_by = 1
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -48,7 +46,7 @@ class CreatePost(LoginRequiredMixin, PermissionRequiredMixin,  CreateView):
     template_name = 'add.html'
     context_object_name = 'news'
     ordering = '-created_at'
-    paginate_by = 1
+    paginate_by = 5
     form_class = PostForm
     permission_required = 'news.add_post'
 
@@ -128,14 +126,21 @@ class Subscription(LoginRequiredMixin, ListView):
     context_object_name = 'category_list'
 
 
-@login_required
-def notify_subscribers(request, category, post):
-    user = request.user
-    subject = post.title
-    message = f"Здравствуй, {user.username}. Новая статья в твоем любимом разделе!"
-    html_message = render_to_string('email_template.html', {'post': post})
+class PostsInCategoryList(ListView):
+    model = Post
+    ordering = '-created_at'
+    template_name = 'news_in_category.html'
+    context_object_name = 'news'
 
-    subscribers = category.subscribers.all()
-    recipient_list = [user.email for user in subscribers]
+    paginate_by = 5
 
-    send_mail(subject, message, None, recipient_list, html_message=html_message)
+    def get_queryset(self):
+        category = Category.objects.get(pk=self.kwargs['pk'])
+        return Post.objects.filter(category=category)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = Category.objects.get(pk=self.kwargs['pk'])
+        return context
+
+
