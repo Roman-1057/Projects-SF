@@ -23,7 +23,7 @@ def send_notify_subscribers(preview, pk, title, subscribers):
         to=subscribers,
     )
 
-    msg.attach_alternative(html_content, 'text')
+    msg.attach_alternative(html_content, 'text/html')
     msg.send()
 
 
