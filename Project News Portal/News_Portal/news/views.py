@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from .models import *
 from .filters import PostFilter
@@ -49,6 +50,7 @@ class CreatePost(LoginRequiredMixin, PermissionRequiredMixin,  CreateView):
     paginate_by = 5
     form_class = PostForm
     permission_required = 'news.add_post'
+    success_url = '/news'
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
