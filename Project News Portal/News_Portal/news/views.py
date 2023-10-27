@@ -145,4 +145,3 @@ class PostsInCategoryList(ListView):
         context['category'] = Category.objects.get(pk=self.kwargs['pk'])
         return context
 
-

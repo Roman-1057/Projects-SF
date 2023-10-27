@@ -1,5 +1,8 @@
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+
 from django.core.mail import EmailMultiAlternatives
-from django.db.models.signals import m2m_changed
+from django.db.models.signals import m2m_changed, pre_save
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.conf import settings
@@ -36,8 +39,24 @@ def notify_subscribers(sender, instance, **kwargs):
         for category in categories:
             subscribers = category.subscribers.all()
             subscribers_email += [user.email for user in subscribers]
-            # subscribers_email += [(user.username, user.email) for user in subscribers]
 
         send_notify_subscribers(instance.preview(), instance.pk, instance.title, subscribers_email)
 
 
+@receiver(pre_save, sender=Post)
+def validate_post_count(sender, instance, **kwargs):
+    """
+    Сигнальная функция для контроля количества публикаций новостей пользователем.
+    """
+    # Определяем текущую дату и время
+    current_date = timezone.now().date()
+
+    # Определяем автора новости
+    author = instance.author
+
+    # Выполняем запрос, чтобы получить количество новостей автора за сегодняшний день
+    post_count = Post.objects.filter(author=author, created_at__date=current_date).count()
+
+    # Если количество новостей автора превышает 3, возвращаем ошибку валидации
+    if post_count >= 3:
+        raise ValidationError("Вы не можете публиковать более трех новостей в сутки.")
