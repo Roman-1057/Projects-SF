@@ -33,7 +33,7 @@ def send_notify_subscribers(preview, pk, title, subscribers):
 
 @shared_task  # отправка писем всем подписчикам в категории
 def notify_subscribers(instance_id):
-    instance = PostCategory.objects.get(pk=instance_id)
+    instance = Post.objects.get(pk=instance_id)
     categories = instance.category.all()
     subscribers_email = []
 
