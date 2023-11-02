@@ -58,7 +58,7 @@ class Command(BaseCommand):
         # добавляем работу нашему задачнику
         scheduler.add_job(
             my_job,
-            trigger=CronTrigger(),  # Интервал 1 минута, для наглядности
+            trigger=CronTrigger(second="*/10"),  # Интервал 10 секунд, для наглядности
             id="my_job",  # уникальный айди
             max_instances=1,
             replace_existing=True,

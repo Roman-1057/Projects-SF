@@ -1,4 +1,5 @@
 import os
+
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -136,3 +137,9 @@ APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
 
 SITE_URL = 'http://127.0.0.1:8000'
 
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+broker_connection_retry_on_startup = True

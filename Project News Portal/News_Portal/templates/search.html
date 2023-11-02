@@ -23,9 +23,11 @@
 {% block content %}
 
 <div align="center">
-    <form method="GET">
+    <form method="GET" action="{% url 'search_post' %}">
         <font size="4">
-            {{ filter.form }}
+            {{ filter.form.title.label_tag }} {{ filter.form.title }}
+            {{ filter.form.author__user.label_tag }} {{ filter.form.author__user }}
+            {{ filter.form.created_at.label_tag }} {{ filter.form.created_at }}
             <input type="submit" value="Найти">
         </font>
     </form>

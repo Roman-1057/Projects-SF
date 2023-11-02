@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from .models import *
 from .filters import PostFilter
@@ -8,6 +7,7 @@ from .forms import PostForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from .tasks import notify_subscribers
 
 
 class PostsList(ListView):
@@ -42,7 +42,7 @@ class SearchPost(ListView):
         return context
 
 
-class CreatePost(LoginRequiredMixin, PermissionRequiredMixin,  CreateView):
+class CreatePost(LoginRequiredMixin, PermissionRequiredMixin,  CreateView):  # добавлен вызов задачи из tasks
     model = Post
     template_name = 'add.html'
     context_object_name = 'news'
@@ -56,7 +56,9 @@ class CreatePost(LoginRequiredMixin, PermissionRequiredMixin,  CreateView):
         form = self.form_class(request.POST)
 
         if form.is_valid():
-            form.save()
+            new_post = form.save()
+            notify_subscribers.delay(new_post.pk)   # вызов задачи на отправку письма подписчикам, при создании поста
+            return redirect('post_detail', pk=new_post.pk)
 
         return super().get(request, *args, **kwargs)
 
@@ -144,4 +146,3 @@ class PostsInCategoryList(ListView):
         context = super().get_context_data(**kwargs)
         context['category'] = Category.objects.get(pk=self.kwargs['pk'])
         return context
-
