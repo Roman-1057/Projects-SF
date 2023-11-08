@@ -1,5 +1,9 @@
 {% extends 'flatpages/default.html' %}
 
+{% load cache %}
+
+{% cache 60 title %}
+
 {% block title %}
 
 <style>
@@ -19,8 +23,10 @@
     <h2 class="neonText animate__animated animate__fadeInDown"><font size="10">Разделы постов</font></h2>
 
 {% endblock title %}
+{% endcache %}
 
 {% block content %}
+
 <style>
         table,
         td,
@@ -34,6 +40,7 @@
                <td>Раздел</td>
                <td>Подписка</td>
            </tr>
+
          {% for category in category_list %}
            <tr>
                <td><font size="5"><a href="{% url 'posts_in_category' category.id %}?selected_category={{ category }}">{{ category }}</a></font></td>

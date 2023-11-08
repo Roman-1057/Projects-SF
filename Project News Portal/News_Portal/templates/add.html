@@ -2,6 +2,10 @@
 
 {% load censor_filters %}
 
+{% load cache %}
+
+{% cache 60 title %}
+
 {% block title %}
 <style>
 .neonText {
@@ -19,6 +23,7 @@
 </style>
     <h2 class="neonText animate__animated animate__fadeInDown"><font size="10">Создание поста</font></h2>
 {% endblock title %}
+{% endcache %}
 
 {% block content %}
 

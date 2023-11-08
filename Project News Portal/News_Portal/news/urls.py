@@ -4,6 +4,7 @@ from .views import PostsList, PostDetail, SearchPost, CreatePost, PostUpdate, Po
     Subscription, PostsInCategoryList
 from django.contrib.auth.views import LoginView, LogoutView
 
+
 urlpatterns = [
     path('', PostsList.as_view()),
     path('index', IndexView.as_view()),

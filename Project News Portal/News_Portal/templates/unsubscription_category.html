@@ -1,5 +1,9 @@
 {% extends 'flatpages/default.html' %}
 
+{% load cache %}
+
+{% cache 30 title %}
+
 {% block title %}
 <style>
 .neonText {
@@ -17,3 +21,4 @@
 </style>
     <h2 class="neonText animate__animated animate__fadeInDown"><font size="10">Вы отписаны от {{ request.GET.selected_category }}</font></h2>
 {% endblock title %}
+{% endcache %}

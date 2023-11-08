@@ -1,5 +1,9 @@
 {% extends 'flatpages/default.html' %}
 
+{% load cache %}
+
+{% cache 60 title %}
+
 {% block title %}
 <style>
 .neonText {
@@ -17,6 +21,7 @@
 </style>
     <h2 class="neonText animate__animated animate__fadeInDown"><font size="10">Ваши подписки</font></h2>
 {% endblock title %}
+{% endcache %}
 
 {% block content %}
 <div class="text animate__animated animate__fadeInUp" align="center">

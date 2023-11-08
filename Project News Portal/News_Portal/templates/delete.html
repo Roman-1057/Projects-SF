@@ -2,6 +2,10 @@
 
 {% load censor_filters %}
 
+{% load cache %}
+
+{% cache 60 title %}
+
 {% block title %}
 
 <style>
@@ -21,6 +25,7 @@
     <h2 class="neonText animate__animated animate__fadeInDown"><font size="10">Удаление поста</font></h2>
 
 {% endblock title %}
+{% endcache %}
 
 {% block content %}
 
