@@ -68,9 +68,13 @@ class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     form_class = PostForm
     permission_required = 'news.change_post'
 
-    def get_object(self, **kwargs):
-        id = self.kwargs.get('pk')
-        return Post.objects.get(pk=id)
+    def get_object(self, **kwargs):  # для кэширования D11
+        id_post = self.kwargs.get('pk')
+        obj = cache.get(f'post-{id_post}', None)
+        if not obj:
+            obj = Post.objects.get(pk=id_post)
+            cache.set(f'post-{id_post}', obj)
+        return obj
 
 
 class PostDelete(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
