@@ -1,4 +1,9 @@
 import os
+import json
+import sys
+import loguru
+import logging
+from django.conf import settings
 
 from dotenv import load_dotenv
 from pathlib import Path
@@ -134,7 +139,6 @@ APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 
 APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
 
-
 SITE_URL = 'http://127.0.0.1:8000'
 
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
@@ -151,3 +155,115 @@ CACHES = {
         'TIMEOUT': 30,
     }
 }
+
+# Регистрируем основной логгер Django
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_formatter',
+        },
+        'general_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'general.log',
+            'formatter': 'file_formatter',
+        },
+        'errors_file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'errors.log',
+            'formatter': 'errors_formatter',
+        },
+        'security_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'security.log',
+            'formatter': 'file_formatter',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': False,
+            'filters': ['request_filter'],
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'general_file', 'errors_file', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console', 'errors_file', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['console', 'errors_file', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.template': {
+            'handlers': ['console', 'errors_file'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['console', 'errors_file'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['console', 'security_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+    'filters': {
+        'request_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: not settings.DEBUG,
+        },
+    },
+    'formatters': {
+        'console_formatter': {
+            'format': '{asctime} [{levelname}] {message}',
+            'style': '{',
+            'datefmt': '%d.%m.%Y %H:%M:%S',
+        },
+        'file_formatter': {
+            'format': '{asctime} [{levelname}] {module} {message}',
+            'style': '{',
+            'datefmt': '%d.%m.%Y %H:%M:%S',
+        },
+        'errors_formatter': {
+            'format': '{asctime} [{levelname}] {message}\n{pathname}\n{exc_info}',
+            'style': '{',
+            'datefmt': '%d.%m.%Y %H:%M:%S',
+        },
+        'pathname': {
+            'format': '[%(asctime)s] %(levelname)s %(pathname)s %(message)s',
+            'datefmt': '%d.%m.%Y %H:%M:%S',
+        },
+        'exc_info': {
+            'format': '[%(asctime)s] %(levelname)s %(pathname)s %(message)s\n%(exc_info)s',
+            'datefmt': '%d.%m.%Y %H:%M:%S',
+        },
+    },
+}
+
+
+logger = logging.getLogger('django')
+
+logger.debug('Debug message')
+logger.info('Info message')
+logger.warning('Warning message')
+logger.error('Error message', exc_info=True)
+logger.critical('Critical message', exc_info=True)
+
+loguru.logger.add(sys.stdout, level="DEBUG",
+                  format="<green>{time:DD.MM.YYYY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{message}</cyan>")
