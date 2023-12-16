@@ -169,19 +169,19 @@ LOGGING = {
         'general_file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': 'general.log',
+            'filename': 'logs/general.log',
             'formatter': 'file_formatter',
         },
         'errors_file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': 'errors.log',
+            'filename': 'logs/errors.log',
             'formatter': 'errors_formatter',
         },
         'security_file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': 'security.log',
+            'filename': 'logs/security.log',
             'formatter': 'file_formatter',
         },
         'mail_admins': {
