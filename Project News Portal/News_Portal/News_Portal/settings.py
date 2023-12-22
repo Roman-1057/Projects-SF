@@ -8,6 +8,8 @@ from django.conf import settings
 from dotenv import load_dotenv
 from pathlib import Path
 
+from django.utils.translation import gettext_lazy as _
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-&(k-*uckawq#85bup%cv-3fam@xx_#^*$6ij(qo26+9)_#rb+8'
@@ -46,6 +48,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'News_Portal.urls'
@@ -266,4 +270,26 @@ logger.error('Error message', exc_info=True)
 logger.critical('Critical message', exc_info=True)
 
 loguru.logger.add(sys.stdout, level="DEBUG",
-                  format="<green>{time:DD.MM.YYYY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{message}</cyan>")
+                  format="<green>{time:DD.MM.YYYY HH:mm:ss}</green> | <level>{level: <8}</level> | "
+                         "<cyan>{message}</cyan>")
+
+
+LANGUAGE_CODE = 'ru'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
+LANGUAGES = [
+   ('ru', _('Russian')),
+   ('en', _('English')),
+]
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale')
+]
+

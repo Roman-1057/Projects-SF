@@ -150,3 +150,4 @@ class PostsInCategoryList(ListView):
         context = super().get_context_data(**kwargs)
         context['category'] = Category.objects.get(pk=self.kwargs['pk'])
         return context
+
