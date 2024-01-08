@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 
+from django.utils.translation import pgettext_lazy
+from django.utils.translation import gettext as _
+
 
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='author')
@@ -29,7 +32,7 @@ class Author(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(unique=True, max_length=50)
+    name = models.CharField(unique=True, max_length=50, help_text=_('category name'))
     subscribers = models.ManyToManyField(User, related_name='subscribed_categories')
 
     def __str__(self):

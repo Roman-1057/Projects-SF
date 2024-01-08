@@ -1,16 +1,44 @@
+import time
+
+import pytz
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic.base import ContextMixin
+
 from .models import *
 from .filters import PostFilter
-from .forms import PostForm
+from .forms import PostForm, TimezoneForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from .tasks import notify_subscribers
 
+from django.utils import timezone
+from rest_framework import viewsets, generics
+from rest_framework import permissions
+from news.serializers import *
 
-class PostsList(ListView):
+
+
+class BaseContextMixin(ContextMixin):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_timezone = self.request.GET.get('timezone')
+
+        if user_timezone:
+            timezone.activate(user_timezone)
+
+        context['current_time'] = timezone.localtime(timezone.now())
+        context['timezone_form'] = TimezoneForm()
+        context['server_time'] = self.request.server_time
+
+        return context
+
+
+class PostsList(BaseContextMixin, ListView):
     model = Post
     ordering = '-created_at'
     template_name = 'news.html'
@@ -19,7 +47,7 @@ class PostsList(ListView):
     paginate_by = 2
 
 
-class PostDetail(DetailView):
+class PostDetail(BaseContextMixin, DetailView):
     model = Post
     template_name = 'post.html'
     context_object_name = 'post'
@@ -29,7 +57,7 @@ class PostDetail(DetailView):
         return render(request, 'news.html', {'post': post})
 
 
-class SearchPost(ListView):
+class SearchPost(BaseContextMixin, ListView):
     model = Post
     template_name = 'search.html'
     context_object_name = 'news'
@@ -42,7 +70,7 @@ class SearchPost(ListView):
         return context
 
 
-class CreatePost(LoginRequiredMixin, PermissionRequiredMixin,  CreateView):  # добавлен вызов задачи из tasks
+class CreatePost(BaseContextMixin, LoginRequiredMixin, PermissionRequiredMixin,  CreateView):  # добавлен вызов задачи из tasks
     model = Post
     template_name = 'add.html'
     context_object_name = 'news'
@@ -63,7 +91,7 @@ class CreatePost(LoginRequiredMixin, PermissionRequiredMixin,  CreateView):  # �
         return super().get(request, *args, **kwargs)
 
 
-class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+class PostUpdate(BaseContextMixin, LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     template_name = 'edit.html'
     form_class = PostForm
     permission_required = 'news.change_post'
@@ -77,14 +105,14 @@ class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
         return obj
 
 
-class PostDelete(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+class PostDelete(BaseContextMixin, LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     template_name = 'delete.html'
     queryset = Post.objects.all()
     success_url = '/news'
     permission_required = 'news.delete_post'
 
 
-class IndexView(LoginRequiredMixin, TemplateView):
+class IndexView(BaseContextMixin, LoginRequiredMixin, TemplateView):
     template_name = 'index.html'
 
     def get_context_data(self, **kwargs):
@@ -99,20 +127,21 @@ class BaseRegisterView(CreateView):
     success_url = '/news'
 
 
-@login_required
-def upgrade_me(request):
-    user = request.user
-    authors_group = Group.objects.get(name='authors')
-    if not request.user.groups.filter(name='authors').exists():
-        authors_group.user_set.add(user)
-    return redirect('/news')
+class UpgradeView(BaseContextMixin, CreateView):
+    @login_required
+    def upgrade_me(self, request, *args, **kwargs):
+        user = request.user
+        authors_group = Group.objects.get(name='authors')
+        if not request.user.groups.filter(name='authors').exists():
+            authors_group.user_set.add(user)
+        return redirect('/news')
 
 
 @login_required
 def subscribe_category(request, pk):
     category = Category.objects.get(pk=pk)
     request.user.subscribed_categories.add(category)
-    return render(request, 'subscription_category.html')
+    return redirect('/news/categories')
 
 
 @login_required
@@ -122,19 +151,19 @@ def unsubscribe_category(request, pk):
     return render(request, 'unsubscription_category.html')
 
 
-class Categories(LoginRequiredMixin, ListView):
+class Categories(BaseContextMixin, LoginRequiredMixin, ListView):
     template_name = 'categories.html'
     model = Category
     context_object_name = 'category_list'
 
 
-class Subscription(LoginRequiredMixin, ListView):
+class Subscription(BaseContextMixin, LoginRequiredMixin, ListView):
     template_name = 'subscription.html'
     model = Category
     context_object_name = 'category_list'
 
 
-class PostsInCategoryList(ListView):
+class PostsInCategoryList(BaseContextMixin, ListView):
     model = Post
     ordering = '-created_at'
     template_name = 'news_in_category.html'
@@ -150,4 +179,39 @@ class PostsInCategoryList(ListView):
         context = super().get_context_data(**kwargs)
         context['category'] = Category.objects.get(pk=self.kwargs['pk'])
         return context
+
+
+class AuthorViewset(viewsets.ModelViewSet):
+   queryset = Author.objects.all()
+   serializer_class = AuthorSerializer
+
+
+class CategoryViewset(viewsets.ModelViewSet):
+   queryset = Category.objects.all()
+   serializer_class = CategorySerializer
+
+
+class PostViewest(viewsets.ModelViewSet):
+   queryset = Post.objects.all()
+   serializer_class = PostSerializer
+
+
+class PostCategoryViewest(viewsets.ModelViewSet):
+   queryset = PostCategory.objects.all()
+   serializer_class = PostCategorySerializer
+
+
+class CommentViewest(viewsets.ModelViewSet):
+   queryset = Comment.objects.all()
+   serializer_class = CommentSerializer
+
+
+class NewsListView(generics.ListAPIView):
+    queryset = Post.objects.filter(post_type='news')
+    serializer_class = PostSerializer
+
+
+class ArticleListView(generics.ListAPIView):
+    queryset = Post.objects.filter(post_type='article')
+    serializer_class = PostSerializer
 

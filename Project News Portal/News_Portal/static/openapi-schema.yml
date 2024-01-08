@@ -1,0 +1,205 @@
+openapi: 3.0.2
+info:
+	title: Django API
+	version: 1.0.0
+paths:
+	/authors:
+		get:
+			summary: Get all authors
+			responses:
+			  '200':
+			  description: OK
+			  content:
+				  application/json:
+					  schema:
+						  type: array
+						  items:
+							  $ref: '#/components/schemas/Author'
+		post:
+			summary: Create a new author
+			requestBody:
+			required: true
+			content:
+				application/json:
+					schema:
+						$ref: '#/components/schemas/AuthorInput'
+			responses:
+				'201':
+					description: Created
+					content:
+						application/json:
+							schema:
+								$ref: '#/components/schemas/Author'
+	/authors/{id}:
+		get:
+			summary: Get an author by ID
+			parameters:
+			- in: path
+			  name: id
+			  required: true
+			  schema:
+				  type: integer
+			  description: ID of the author
+			responses:
+				'200':
+				description: OK
+				content:
+					application/json:
+						schema:
+							$ref: '#/components/schemas/Author'
+		put:
+			summary: Update an author
+			parameters:
+			- in: path
+			name: id
+			required: true
+			schema:
+				type: integer
+			description: ID of the author
+			requestBody:
+			  required: true
+			content:
+				application/json:
+					schema:
+						$ref: '#/components/schemas/AuthorInput'
+			responses:
+					'200':
+					description: OK
+					content:
+						application/json:
+							schema:
+								$ref: '#/components/schemas/Author'
+		delete:
+			summary: Delete an author
+			parameters:
+			- in: path
+			name: id
+			required: true
+			schema:
+				type: integer
+			description: ID of the author
+			responses:
+				'204':
+				description: No Content
+	/categories:
+		get:
+			summary: Get all categories
+			responses:
+				'200':
+				description: OK
+				content:
+					application/json:
+						schema:
+							type: array
+							items:
+								$ref: '#/components/schemas/Category'
+		post:
+			summary: Create a new category
+			requestBody:
+			required: true
+			content:
+				application/json:
+					schema:
+						$ref: '#/components/schemas/CategoryInput'
+			responses:
+				'201':
+				description: Created
+				content:
+					application/json:
+						schema:
+							$ref: '#/components/schemas/Category'
+	/categories/{id}:
+		get:
+			summary: Get a category by ID
+			parameters:
+			- in: path
+			  name: id
+			  required: true
+			  schema:
+				  type: integer
+			  description: ID of the category
+			  responses:
+					'200':
+				  description: OK
+				  content:
+					  application/json:
+						  schema:
+							  $ref: '#/components/schemas/Category'
+		put:
+		    summary: Update a category
+			parameters:
+			- in: path
+		    	name: id
+				required: true
+				schema:
+				  type: integer
+				description: ID of the category
+				requestBody:
+			    required: true
+			    content:
+				    application/json:
+					    schema:
+						    $ref: '#/components/schemas/CategoryInput'
+			responses:
+				'200':
+					description: OK
+					content:
+						application/json:
+							schema:
+								$ref: '#/components/schemas/Category'
+		delete:
+			summary: Delete a category
+			parameters:
+			- in: path
+			  name: id
+			  required: true
+			  schema:
+				  type: integer
+			  description: ID of the category
+			responses:
+				'204':
+				description: No Content
+	/posts:
+		get:
+			summary: Get all posts
+		responses:
+			'200':
+			description: OK
+			content:
+				application/json:
+					schema:
+						type: array
+					items:
+						$ref: '#/components/schemas/Post'
+		post:
+			summary: Create a new post
+			requestBody:
+			required: true
+			content:
+				application/json:
+					schema:
+						$ref: '#/components/schemas/PostInput'
+			responses:
+				'201':
+				description: Created
+				content:
+					application/json:
+						schema:
+							$ref: '#/components/schemas/Post'
+	/posts/{id}:
+		get:
+			summary: Get a post by ID
+			parameters:
+			- in: path
+			  name: id
+			  required: true
+			  schema:
+				  type: integer
+			  description: ID of the post
+			responses:
+				'200':
+				description: OK
+				content:
+					application/json:
+						schema:
+							$ref: '#/components/schemas/

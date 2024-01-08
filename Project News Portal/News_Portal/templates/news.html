@@ -1,5 +1,7 @@
 {% extends 'flatpages/default.html' %}
 
+{% load i18n %}
+{% load tz %}
 {% load censor_filters %}
 
 {% block title %}
@@ -18,7 +20,7 @@
       0 0 151px #00FFFF;
 }
 </style>
-    <h2 class="neonText animate__animated animate__fadeInDown"><font size="10">Все новости и статьи</font></h2>
+    <h2 class="neonText animate__animated animate__fadeInDown"><font size="10">{% trans "All news and articles" %}</font></h2>
 
 {% endblock title %}
 
@@ -31,14 +33,18 @@
             text-align: center;
             padding: 10px;
         }
+
+</style>
+<style>
+ body {background-color: {% if server_time.hour >= 22 or server_time.hour <= 5 %} honeydew {% else %} snow {% endif %};}
 </style>
 
     {% if news %}
        <table border="0" cellspacing="0" cellpadding="10" width="1200" align="center">
            <tr>
-               <td>Заголовок</td>
-               <td>Дата публикации</td>
-               <td>Содержание</td>
+               <td>{% trans "Title" %}</td>
+               <td>{% trans "Date of publication" %}</td>
+               <td>{% trans "Content" %}</td>
            </tr>
 
            {% for post in news %}
@@ -50,14 +56,14 @@
            {% endfor %}
        </table>
     {% else %}
-        <h4 class="text-light"><font size="4">Новостей нет</font></h4>
+        <h4 class="text-light"><font size="4">{% trans "There is no news" %}</font></h4>
     {% endif %}
 
 {% if is_paginated %}
 <div align="center"><font size="4">
 
     {% if page_obj.has_previous %}
-            <a href="?page=1">Начало</a>
+            <a href="?page=1">{% trans "Beginning" %}</a>
             <a href="?page={{ page_obj.previous_page_number }}"><<<</a>
     {% endif %}
 
@@ -71,7 +77,7 @@
 
     {% if page_obj.has_next %}
             <a href="?page={{ page_obj.next_page_number }}">>>></a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">Продолжение</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">{% trans "continuation" %}</a>
     {% endif %}
 </font>
 </div>

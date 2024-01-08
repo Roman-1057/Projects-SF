@@ -22,6 +22,7 @@ SITE_ID = 1
 
 INSTALLED_APPS = [
     'news.apps.NewsConfig',
+    'modeltranslation',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,6 +39,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
     'django_apscheduler',
+
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +53,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
 
     'django.middleware.locale.LocaleMiddleware',
+    'basic.middlewares.TimezoneMiddleware',
+    'basic.middlewares.ServerTimeMiddleware',
 ]
 
 ROOT_URLCONF = 'News_Portal.urls'
@@ -291,5 +296,15 @@ LANGUAGES = [
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale')
-]
+    ]
+
+REST_FRAMEWORK = {
+   'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+   'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+   'PAGE_SIZE': 10,
+   'DEFAULT_PERMISSION_CLASSES': [
+       'rest_framework.permissions.IsAuthenticated',
+   ]
+
+}
 

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import *
+from modeltranslation.admin import TranslationAdmin
 
 
 def nullfy_quantity(modeladmin, request, queryset):
@@ -22,6 +23,14 @@ class PostCategoryAdmin(admin.ModelAdmin):
 
 class CommentsAdmin(admin.ModelAdmin):
     list_display = ['post', 'user', 'rating']
+
+
+class CategoryAdmin(TranslationAdmin):
+    model = Category
+
+
+class MyModelAdmin(TranslationAdmin):
+    model = Post
 
 
 admin.site.register(Category)

@@ -1,7 +1,9 @@
-from django.urls import path
-from .views import PostsList, PostDetail, SearchPost, CreatePost, PostUpdate, PostDelete, \
-    IndexView, BaseRegisterView, upgrade_me, subscribe_category, Categories, unsubscribe_category, \
-    Subscription, PostsInCategoryList
+from django.urls import path, include
+from django.views.generic import TemplateView
+from django_apscheduler import admin
+
+from . import views
+from .views import *
 from django.contrib.auth.views import LoginView, LogoutView
 
 
@@ -23,10 +25,11 @@ urlpatterns = [
     path('newsup',
          BaseRegisterView.as_view(template_name='newsup.html'),
          name='newsup'),
-    path('upgrade', upgrade_me, name='upgrade'),
+    path('upgrade', UpgradeView.upgrade_me, name='upgrade'),
     path('<int:pk>/subscription_category', subscribe_category, name='subscribe_category'),
     path('<int:pk>/unsubscription_category', unsubscribe_category, name='unsubscribe_category'),
     path('categories', Categories.as_view()),
     path('subscription', Subscription.as_view()),
     path('categories/<int:pk>/news_in_category', PostsInCategoryList.as_view(), name='posts_in_category'),
+    path('i18n/', include('django.conf.urls.i18n')),
 ]
